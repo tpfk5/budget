@@ -12,6 +12,16 @@
   <!-- PWA 매니페스트 인라인 -->
   <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22%EC%B2%AD%EB%85%84%ED%9D%AC%EB%A7%9D%EB%82%B4%EC%9D%BC%EC%B9%B4%EB%93%9C%20%EA%B0%80%EA%B3%84%EB%B6%80%22%2C%22short_name%22%3A%22%EA%B5%AC%EC%A7%81%ED%99%9C%EB%8F%99%EB%B9%84%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f0f13%22%2C%22theme_color%22%3A%22%230f0f13%22%7D" />
 
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-56W2555NLE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-56W2555NLE');
+</script>
+  
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; background: #0f0f13; color: #e2e8f0; font-family: -apple-system, 'Apple SD Gothic Neo', 'Pretendard', sans-serif; overscroll-behavior: none; }
@@ -210,6 +220,10 @@ function renderMonthTabs() {
 // ── 폼 ────────────────────────────────────────────────────
 function toggleForm() {
   state.formOpen = !state.formOpen;
+  // GA4 이벤트 전송
+  if(state.formOpen) {
+    gtag('event', 'form_open', { 'event_category': 'usage', 'event_label': '지출추가버튼클릭' });
+  }
   renderForm();
   document.getElementById('btn-add').textContent = state.formOpen ? '✕ 닫기' : '+ 지출 추가';
   document.getElementById('btn-add').className = 'btn-add' + (state.formOpen ? ' open' : '');
@@ -238,6 +252,16 @@ function addRecord() {
   const name = document.getElementById('f-name').value.trim();
   const amount = parseInt(document.getElementById('f-amount').value, 10);
   if (!name || !amount || amount <= 0) { alert('지출명과 금액을 입력해주세요.'); return; }
+
+//[GA4 이벤트 전송]
+  gtag('event', 'add_record', {
+    'event_category': 'conversion',
+    'event_label': '지출저장완료',
+    'value': amount,               // 실제 지출 금액을 숫자로 전송
+    'currency': 'KRW',             // 통화 단위
+    'item_category': document.getElementById('f-cat').value // 선택한 카테고리
+  });
+  
   const rec = {
     id: Date.now(),
     name,
@@ -259,6 +283,13 @@ function addRecord() {
 
 function deleteRecord(id) {
   if (!confirm('삭제할까요?')) return;
+
+gtag('event', 'delete_record', {
+    'event_category': 'usage',
+    'event_label': '지출내역삭제',
+    'method': 'manual_delete' // 수동 삭제임을 표시
+  });
+  
   state.records = state.records.filter(r => r.id !== id);
   save(); renderAll();
 }
@@ -266,7 +297,11 @@ function deleteRecord(id) {
 // ── 탭 / 월 전환 ─────────────────────────────────────────
 function setTab(tab, btn) {
   state.tab = tab;
+  
+  // GA4 이벤트 전송
+  gtag('event', 'tab_view', { 'tab_name': tab });
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  
   btn.classList.add('active');
   ['dashboard','history','limits'].forEach(t => {
     document.getElementById('view-'+t).style.display = t===tab ? 'block' : 'none';
