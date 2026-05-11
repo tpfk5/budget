@@ -34,7 +34,7 @@
     .header-logo { font-size: 30px; font-weight: 700; letter-spacing: 0.1em; color: #111; line-height: 1; }
     .header-sub { font-size: 11px; letter-spacing: 0.14em; color: #666; margin-top: 4px; }
 
-    /* ADD 버튼 — 기본: 블랙 아웃라인 / 열렸을 때: 라임  */
+    /* ADD 버튼  */
     #btn-add {
       background: transparent;
       border: 1px solid #111;
@@ -48,7 +48,9 @@
       transition: background .15s, border-color .15s, color .15s;
       font-family: inherit;
     }
-    #btn-add.open { color: #00ff00; }
+    #btn-add.open { color: #111; background-color: #00ff00; }
+      #btn-:active { opacity: 0.8; }
+    
 
     /* ── 월 탭 ── */
     .month-tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
@@ -60,7 +62,7 @@
       transition: color .15s, border-color .15s; font-family: inherit;
     }
     /* 활성 월 탭 — 라임 언더라인 */
-    .month-btn.active { color: #111; font-weight: 700; }
+    .month-btn.active { color: #00ff00; font-weight: 700; }
 
     /* ── 뷰 탭 ── */
     .tab-row { display: flex; border-top: 0.5px solid #aaa; margin-top: 2px; }
@@ -71,7 +73,7 @@
       transition: color .15s, border-color .15s; font-family: inherit;
     }
     /* 활성 뷰 탭 — 라임 탑라인 */
-    .tab-btn.active { color: #111; border-top-color: var(--lime); font-weight: 700; }
+    .tab-btn.active { color: #00ff00; border-top-color: var(--lime); font-weight: 700; }
 
     /* ── 카드 공통 ── */
     .card { background: #cccccc; border-bottom: 0.5px solid #aaa; padding: 16px; margin-bottom: 1px; }
@@ -119,7 +121,7 @@
 
     /* 저장 버튼 — 라임 */
     #btn-save {
-      background: var(--lime); border: none; border-radius: 0; padding: 13px;
+      background: var(--lime); border:  1px solid #111; border-radius: 0; padding: 13px;
       color: #111; font-weight: 700; font-size: 12px; letter-spacing: 0.14em;
       cursor: pointer; width: 100%; margin-top: 4px; font-family: inherit;
     }
@@ -333,13 +335,12 @@ function renderDashboard() {
 
   let catBarsHtml = Object.entries(MONTHLY_LIMITS).map(([cat, lim]) => {
     const u = catUsage[cat] || 0;
-    if (u === 0 && !lim) return '';
     const cp = pct(u, lim);
     const bc2 = barClass(cp);
     return `<div class="cat-row">
       <div class="cat-meta">
         <span>${cat}</span>
-        <span class="cat-limit${lim&&cp>=90?' danger':''}">${fmt(u)}${lim?' / '+fmt(lim):' (한도없음)'}</span>
+        <span class="cat-limit${lim&&cp>=90?' danger':''}">${fmt(u)}${lim?' / '+fmt(lim):''}</span>
       </div>
       ${lim ? `<div class="cat-bar-bg"><div class="cat-bar-fill ${bc2}" style="width:${cp}%"></div></div>` : ''}
     </div>`;
