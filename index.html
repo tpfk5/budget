@@ -34,7 +34,7 @@
     .header-logo { font-size: 30px; font-weight: 700; letter-spacing: 0.1em; color: #111; line-height: 1; }
     .header-sub { font-size: 11px; letter-spacing: 0.14em; color: #666; margin-top: 4px; }
 
-    /* ADD 버튼  */
+    /* ── ADD 버튼 ── */
     #btn-add {
       background: transparent;
       border: 1px solid #111;
@@ -48,32 +48,31 @@
       transition: background .15s, border-color .15s, color .15s;
       font-family: inherit;
     }
-    #btn-add.open { color: #111; background-color: #00ff00; }
-      #btn-:active { opacity: 0.8; }
-    
+    /* ✅ 수정: open 상태는 기본 검정 유지 */
+    #btn-add.open { background: transparent; border-color: #111; color: #111; }
+    /* ✅ 수정: 오타 #btn-: → #btn-add: / 누르는 순간만 라임 배경 */
+    #btn-add:active { background: var(--lime); border-color: var(--lime); color: #111; }
 
     /* ── 월 탭 ── */
     .month-tabs { display: flex; overflow-x: auto; scrollbar-width: none; }
     .month-tabs::-webkit-scrollbar { display: none; }
     .month-btn {
-      background: transparent; border: none; border-bottom: none;
-      color: #111; padding: 8px 13px; font-size: 12px; font-weight: 500;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      color: #777; padding: 8px 13px; font-size: 12px; font-weight: 500;
       letter-spacing: 0.1em; cursor: pointer; white-space: nowrap;
       transition: color .15s, border-color .15s; font-family: inherit;
     }
-    /* 활성 월 탭 — 라임 언더라인 */
-    .month-btn.active { color: #00ff00; font-weight: 700; }
+    .month-btn.active { color: var(--lime); font-weight: 700; }
 
     /* ── 뷰 탭 ── */
     .tab-row { display: flex; border-top: 0.5px solid #aaa; margin-top: 2px; }
     .tab-btn {
-      background: transparent; border: none; border-top: none;
-      color: #111; padding: 9px 14px; font-size: 11px; letter-spacing: 0.1em;
+      background: transparent; border: none; border-top: 2px solid transparent;
+      color: #777; padding: 9px 14px; font-size: 11px; letter-spacing: 0.1em;
       cursor: pointer; white-space: nowrap; font-weight: 500;
       transition: color .15s, border-color .15s; font-family: inherit;
     }
-    /* 활성 뷰 탭 — 라임 탑라인 */
-    .tab-btn.active { color: #00ff00; border-top-color: var(--lime); font-weight: 700; }
+    .tab-btn.active { color: #111; border-top-color: var(--lime); font-weight: 700; }
 
     /* ── 카드 공통 ── */
     .card { background: #cccccc; border-bottom: 0.5px solid #aaa; padding: 16px; margin-bottom: 1px; }
@@ -109,19 +108,19 @@
     #form-wrap h2 { font-size: 12px; letter-spacing: 0.16em; font-weight: 700; color: #111; margin-bottom: 14px; }
     .form-grid { display: flex; flex-direction: column; gap: 9px; }
     .form-row { display: flex; gap: 8px; }
-    input, select {
+    /* ✅ 수정: checkbox 제외 */
+    input:not([type="checkbox"]), select {
       background: #bbb; border: 0.5px solid #999; border-radius: 0;
       padding: 10px 13px; color: #111; font-size: 14px; width: 100%;
       outline: none; -webkit-appearance: none; font-family: inherit;
     }
-    input:focus, select:focus { border-color: #111; background: #c8c8c8; }
+    input:not([type="checkbox"]):focus, select:focus { border-color: #111; background: #c8c8c8; }
     input::placeholder { color: #888; }
-    .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666; }
-    .checkbox-row input { width: 16px; height: 16px; accent-color: var(--lime); }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666; cursor: pointer; user-select: none; }
 
-    /* 저장 버튼 — 라임 */
+    /* ── 저장 버튼 ── */
     #btn-save {
-      background: var(--lime); border:  1px solid #111; border-radius: 0; padding: 13px;
+      background: var(--lime); border: 1px solid #111; border-radius: 0; padding: 13px;
       color: #111; font-weight: 700; font-size: 12px; letter-spacing: 0.14em;
       cursor: pointer; width: 100%; margin-top: 4px; font-family: inherit;
     }
@@ -136,6 +135,8 @@
     .badge { font-size: 10px; letter-spacing: 0.08em; padding: 2px 8px; font-weight: 500; border: 0.5px solid #999; }
     .badge-cat { color: #555; }
     .badge-warn { border-color: #c00; color: #c00; }
+    /* ✅ 추가: 영수증 첨부 뱃지 */
+    .badge-ok { border-color: #072BBB; color: #072BBB; }
     .record-name { font-size: 14px; font-weight: 600; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .record-memo { font-size: 12px; color: #777; margin-top: 3px; }
     .record-date { font-size: 11px; letter-spacing: 0.08em; color: #888; margin-top: 3px; }
@@ -209,6 +210,8 @@ const ALL_CATS = [...Object.keys(MONTHLY_LIMITS), ...Object.keys(PERIOD_LIMITS)]
 const BLOCKED = ['음주·담배','입시학원','국제항공·선박료','대학등록금·학점은행제','일반진료비·의약품','잡지·만화·음반','PC방·게임방','당구장·볼링장 등 레저'];
 
 let state = { records: [], currentMonth: '5월', tab: 'dashboard', formOpen: false };
+// ✅ 추가: 편집 중인 record id
+let editId = null;
 
 function load() {
   try { const d = JSON.parse(localStorage.getItem(STORAGE_KEY)); if (d) state.records = d.records || []; } catch {}
@@ -237,53 +240,72 @@ function renderMonthTabs() {
 
 function toggleForm() {
   state.formOpen = !state.formOpen;
-  if (state.formOpen) {
-    gtag('event', 'form_open', { event_category: 'usage', event_label: '지출추가버튼클릭' });
-  }
+  // ✅ 수정: 닫을 때 editId 초기화
+  if (!state.formOpen) editId = null;
   const btn = document.getElementById('btn-add');
   btn.textContent = state.formOpen ? '✕ CLOSE' : '+ ADD';
   btn.className = state.formOpen ? 'open' : '';
   renderForm();
 }
 
+// ✅ 수정: checkbox → div 토글 방식, 편집 기능 추가
 function renderForm() {
   const el = document.getElementById('form-wrap');
   if (!state.formOpen) { el.style.display = 'none'; return; }
+  const editing = editId !== null ? state.records.find(r => r.id === editId) : null;
+  const rc = editing ? editing.receipt : false;
+  el._receipt = rc;
   el.style.display = 'block';
   el.innerHTML = `
-    <h2>RECORD EXPENSE</h2>
+    <h2>${editing ? 'EDIT RECORD' : 'RECORD EXPENSE'}</h2>
     <div class="form-grid">
-      <input id="f-name" placeholder="지출명 (예: 정보처리기사 접수비)" />
+      <input id="f-name" placeholder="지출명 (예: 정보처리기사 접수비)" value="${editing ? editing.name : ''}" />
       <div class="form-row">
-        <select id="f-cat" style="flex:1">${ALL_CATS.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
-        <select id="f-month" style="width:90px">${MONTHS.map(m=>`<option value="${m}"${m===state.currentMonth?' selected':''}>${MONTH_LABELS[m]}</option>`).join('')}</select>
+        <select id="f-cat" style="flex:1">${ALL_CATS.map(c=>`<option value="${c}"${editing&&editing.category===c?' selected':''}>${c}</option>`).join('')}</select>
+        <select id="f-month" style="width:90px">${MONTHS.map(m=>`<option value="${m}"${(editing?editing.month:state.currentMonth)===m?' selected':''}>${MONTH_LABELS[m]}</option>`).join('')}</select>
       </div>
-      <input id="f-amount" type="number" inputmode="numeric" placeholder="금액 (숫자만)" />
-      <input id="f-memo" placeholder="메모 (선택)" />
-      <label class="checkbox-row"><input type="checkbox" id="f-receipt" /> 영수증 첨부 완료</label>
-      <button id="btn-save" onclick="addRecord()">SAVE</button>
+      <input id="f-amount" type="number" inputmode="numeric" placeholder="금액 (숫자만)" value="${editing ? editing.amount : ''}" />
+      <input id="f-memo" placeholder="메모 (선택)" value="${editing ? editing.memo : ''}" />
+      <div class="checkbox-row" onclick="toggleReceipt()">
+        <div id="receipt-box" style="width:16px;height:16px;border:1px solid ${rc?'#072BBB':'#999'};background:${rc?'#072BBB':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;">${rc?'<span style="color:#fff;font-size:10px;line-height:1;">✓</span>':''}</div>
+        <span id="receipt-label" style="color:${rc?'#072BBB':'#666'};">영수증 첨부 완료</span>
+      </div>
+      <button id="btn-save" onclick="saveRecord()">SAVE</button>
     </div>`;
 }
 
-function addRecord() {
+function toggleReceipt() {
+  const el = document.getElementById('form-wrap');
+  el._receipt = !el._receipt;
+  const c = el._receipt;
+  const box = document.getElementById('receipt-box');
+  box.style.border = `1px solid ${c ? '#072BBB' : '#999'}`;
+  box.style.background = c ? '#072BBB' : 'transparent';
+  box.innerHTML = c ? '<span style="color:#fff;font-size:10px;line-height:1;">✓</span>' : '';
+  document.getElementById('receipt-label').style.color = c ? '#072BBB' : '#666';
+}
+
+// ✅ 수정: addRecord → saveRecord (신규+수정 통합)
+function saveRecord() {
   const name = document.getElementById('f-name').value.trim();
   const amount = parseInt(document.getElementById('f-amount').value, 10);
   if (!name || !amount || amount <= 0) { alert('지출명과 금액을 입력해주세요.'); return; }
-  gtag('event', 'add_record', {
-    event_category: 'conversion', event_label: '지출저장완료',
-    value: amount, currency: 'KRW',
-    item_category: document.getElementById('f-cat').value
-  });
-  const monthSel = document.getElementById('f-month');
-  const selectedMonth = MONTHS[monthSel.selectedIndex];
-  state.records.unshift({
-    id: Date.now(), name,
-    category: document.getElementById('f-cat').value,
-    amount, month: selectedMonth,
-    memo: document.getElementById('f-memo').value.trim(),
-    receipt: document.getElementById('f-receipt').checked,
-    date: new Date().toLocaleDateString('ko-KR'),
-  });
+  const el = document.getElementById('form-wrap');
+  const receipt = el._receipt || false;
+  const cat = document.getElementById('f-cat').value;
+  const selectedMonth = MONTHS[document.getElementById('f-month').selectedIndex];
+  const memo = document.getElementById('f-memo').value.trim();
+
+  if (editId !== null) {
+    // 기존 내역 수정
+    const idx = state.records.findIndex(r => r.id === editId);
+    if (idx !== -1) state.records[idx] = { ...state.records[idx], name, category: cat, amount, month: selectedMonth, memo, receipt };
+    editId = null;
+  } else {
+    // 신규 추가
+    gtag('event', 'add_record', { event_category: 'conversion', event_label: '지출저장완료', value: amount, currency: 'KRW', item_category: cat });
+    state.records.unshift({ id: Date.now(), name, category: cat, amount, month: selectedMonth, memo, receipt, date: new Date().toLocaleDateString('ko-KR') });
+  }
   save();
   state.formOpen = false;
   document.getElementById('btn-add').textContent = '+ ADD';
@@ -297,6 +319,16 @@ function deleteRecord(id) {
   gtag('event', 'delete_record', { event_category: 'usage', event_label: '지출내역삭제', method: 'manual_delete' });
   state.records = state.records.filter(r => r.id !== id);
   save(); renderAll();
+}
+
+// ✅ 추가: 편집 진입
+function editRecord(id) {
+  editId = id;
+  state.formOpen = true;
+  document.getElementById('btn-add').textContent = '✕ CLOSE';
+  document.getElementById('btn-add').className = 'open';
+  renderForm();
+  document.getElementById('scroll-body').scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function setTab(tab, btn) {
@@ -395,7 +427,9 @@ function renderHistory() {
         <div class="record-left">
           <div class="record-badges">
             <span class="badge badge-cat">${r.category}</span>
-            ${!r.receipt ? '<span class="badge badge-warn">영수증 미첨부</span>' : ''}
+            ${r.receipt
+              ? '<span class="badge badge-ok">영수증 첨부</span>'
+              : '<span class="badge badge-warn">영수증 미첨부</span>'}
           </div>
           <div class="record-name">${r.name}</div>
           ${r.memo ? `<div class="record-memo">${r.memo}</div>` : ''}
@@ -403,7 +437,10 @@ function renderHistory() {
         </div>
         <div class="record-right">
           <div class="record-amount">−${fmt(r.amount)}</div>
-          <button class="btn-del" onclick="deleteRecord(${r.id})">DEL</button>
+          <div style="display:flex;gap:5px;">
+            <button class="btn-del" onclick="editRecord(${r.id})">EDIT</button>
+            <button class="btn-del" onclick="deleteRecord(${r.id})">DEL</button>
+          </div>
         </div>
       </div>`).join('') +
     `</div>`;
@@ -413,7 +450,7 @@ function renderLimits() {
   const monthRows = Object.entries(MONTHLY_LIMITS).map(([cat, lim]) =>
     `<div class="limit-row">
       <span>${cat}</span>
-      <span class="limit-val ${lim?'':'none'}">${lim ? '월 '+fmt(lim) : '한도없음'}</span>
+      <span class="limit-val ${lim?'':'none'}">${lim ? '월 '+fmt(lim) : '—'}</span>
     </div>`).join('');
 
   const periodRows = Object.entries(PERIOD_LIMITS).map(([cat, lim]) =>
