@@ -72,7 +72,7 @@
       cursor: pointer; white-space: nowrap; font-weight: 500;
       transition: color .15s, border-color .15s; font-family: inherit;
     }
-    .tab-btn.active { color: #111; border-top-color: var(--lime); font-weight: 700; }
+    .tab-btn.active { color: var(--lime); font-weight: 700; }
 
     /* ── 카드 공통 ── */
     .card { background: #cccccc; border-bottom: 0.5px solid #aaa; padding: 16px; margin-bottom: 1px; }
@@ -191,9 +191,9 @@ const STORAGE_KEY = 'sjyouth_v2';
 
 const MONTHLY_LIMITS = {
   '교육비': null,
+  '자격증 접수비': null,
   '교재·도서비': 100000,
   '사무용품비': 50000,
-  '자격증 접수비': null,
   '면접 지원': 50000,
   '교통비': 100000,
   '통신비': 50000,
@@ -210,7 +210,6 @@ const ALL_CATS = [...Object.keys(MONTHLY_LIMITS), ...Object.keys(PERIOD_LIMITS)]
 const BLOCKED = ['음주·담배','입시학원','국제항공·선박료','대학등록금·학점은행제','일반진료비·의약품','잡지·만화·음반','PC방·게임방','당구장·볼링장 등 레저'];
 
 let state = { records: [], currentMonth: '5월', tab: 'dashboard', formOpen: false };
-// ✅ 추가: 편집 중인 record id
 let editId = null;
 
 function load() {
@@ -240,7 +239,7 @@ function renderMonthTabs() {
 
 function toggleForm() {
   state.formOpen = !state.formOpen;
-  // ✅ 수정: 닫을 때 editId 초기화
+
   if (!state.formOpen) editId = null;
   const btn = document.getElementById('btn-add');
   btn.textContent = state.formOpen ? '✕ CLOSE' : '+ ADD';
@@ -248,7 +247,6 @@ function toggleForm() {
   renderForm();
 }
 
-// ✅ 수정: checkbox → div 토글 방식, 편집 기능 추가
 function renderForm() {
   const el = document.getElementById('form-wrap');
   if (!state.formOpen) { el.style.display = 'none'; return; }
@@ -285,7 +283,6 @@ function toggleReceipt() {
   document.getElementById('receipt-label').style.color = c ? '#072BBB' : '#666';
 }
 
-// ✅ 수정: addRecord → saveRecord (신규+수정 통합)
 function saveRecord() {
   const name = document.getElementById('f-name').value.trim();
   const amount = parseInt(document.getElementById('f-amount').value, 10);
@@ -428,8 +425,8 @@ function renderHistory() {
           <div class="record-badges">
             <span class="badge badge-cat">${r.category}</span>
             ${r.receipt
-              ? '<span class="badge badge-ok">영수증 첨부</span>'
-              : '<span class="badge badge-warn">영수증 미첨부</span>'}
+              ? '<span class="badge badge-ok">환급 신청</span>'
+              : '<span class="badge badge-warn">환급 미신청</span>'}
           </div>
           <div class="record-name">${r.name}</div>
           ${r.memo ? `<div class="record-memo">${r.memo}</div>` : ''}
@@ -472,7 +469,7 @@ function renderLimits() {
     <div class="card">
       <div class="card-title">NOT COVERED</div>
       <div style="display:flex;flex-direction:column;">${blockedRows}</div>
-      <div class="warn-box">⚠ 식비·건강관리비·문화비 오프라인 결제는 세종시 관내 사업장만 인정</div>
+      <div class="warn-box"> 식비·건강관리비·문화비 오프라인 결제는 세종시 관내 사업장만 인정</div>
     </div>`;
 }
 
