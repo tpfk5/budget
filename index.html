@@ -9,6 +9,9 @@
   <meta name="apple-mobile-web-app-title" content="JOBLOG" />
   <title>JOBLOG</title>
   <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22JOBLOG%22%2C%22short_name%22%3A%22JOBLOG%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23cccccc%22%2C%22theme_color%22%3A%22%23cccccc%22%7D" />
+  
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-56W2555NLE"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -19,9 +22,21 @@
   <style>
     :root { --lime: #00ff00; --orange: #ff6a00; --black: #111; --bg: #cccccc; --border: 2px solid #111; }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; background: var(--bg); color: var(--black); font-family: 'Helvetica Neue', -apple-system, 'Apple SD Gothic Neo', 'Pretendard', sans-serif; overscroll-behavior: none; }
+    
+    /* 전체 화면 배경을 어둡게 설정하여 중앙의 레이아웃이 돋보이도록 여백 레이아웃 구현 */
+    html, body { height: 100%; background: #333333; color: var(--black); font-family: 'Pretendard', -apple-system, sans-serif; overscroll-behavior: none; }
 
-    #app { display: flex; flex-direction: column; height: 100dvh; }
+    /* 레퍼런스 이미지처럼 최대 너비를 제한하고 가운데 정렬하여 양 옆에 여백 생성 */
+    #app { 
+      display: flex; 
+      flex-direction: column; 
+      height: 100dvh; 
+      max-width: 500px; 
+      margin: 0 auto; 
+      background: var(--bg); 
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    
     #header { background: var(--bg); padding: env(safe-area-inset-top, 0px) 0 0; flex-shrink: 0; }
     #scroll-body { flex: 1; overflow-y: auto; background: var(--bg); }
 
@@ -72,7 +87,7 @@
     .ov-rcp.no { opacity: 0.3; }
     .nodata { padding: 40px 14px; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; border-bottom: var(--border); }
 
-    /* ── BY CATEGORY (숫자만, 막대 없음) ── */
+    /* ── BY CATEGORY ── */
     .cat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: var(--border); }
     .cat-name { font-size: 13px; color: var(--black); font-weight: 700; }
     .cat-amt { font-size: 12px; color: var(--black); font-weight: 600; text-align: right; }
@@ -91,7 +106,6 @@
     .btn-action { background: transparent; border: 1.5px solid var(--black); padding: 3px 8px; color: var(--black); font-size: 10px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: 0.06em; }
     .btn-action:active { background: var(--lime); }
 
-    /* ── INFO 탭 ── */
     /* ── INFO 탭 ── */
     .info-sec-hdr { display: grid; grid-template-columns: 80px 1fr 80px; padding: 9px 14px; border-bottom: var(--border); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: var(--black); }
     .info-sec-hdr span:last-child { text-align: right; }
@@ -189,7 +203,6 @@
   </div>
 </div>
 
-<!-- 예산 수정 모달 -->
 <div id="budget-modal" class="modal-overlay" style="display:none" onclick="closeBudgetModal(event)">
   <div class="modal-box">
     <div class="modal-title">EDIT BUDGET</div>
@@ -221,7 +234,6 @@ const PERIOD_LIMITS = {
 };
 const ALL_CATS = [...Object.keys(MONTHLY_LIMITS), ...Object.keys(PERIOD_LIMITS)];
 
-// INFO 탭용 카테고리별 상세 정보
 const CAT_INFO = {
   '교육비':              { limit: '한도없음',      docs: '카드영수증 · 수강확인증 · 커리큘럼' },
   '교재·도서비':         { limit: '월 100,000원',  docs: '카드영수증 · 거래명세표' },
@@ -278,7 +290,6 @@ function renderMonthTabs() {
   ).join('');
 }
 
-/* ── 예산 모달 ── */
 function openBudgetModal() {
   document.getElementById('budget-input').value = getBudget(state.currentMonth);
   document.getElementById('budget-modal').style.display = 'flex';
@@ -297,7 +308,6 @@ function saveBudget() {
   renderAll();
 }
 
-/* ── 폼 ── */
 function toggleForm() {
   state.formOpen = !state.formOpen;
   if (!state.formOpen) editId = null;
@@ -428,7 +438,6 @@ function renderTab() {
   else renderStats();
 }
 
-/* ── OVERVIEW ── */
 function renderDashboard() {
   const m = state.currentMonth;
   const budget = getBudget(m);
@@ -451,7 +460,6 @@ function renderDashboard() {
         </div>
       </div>`).join('');
 
-  // 월별 한도 카테고리 (숫자만, 막대 없음)
   const catRowsHtml = Object.entries(MONTHLY_LIMITS).map(([cat, lim]) => {
     const u = catUsage[cat] || 0;
     const cp = pct(u, lim);
@@ -461,7 +469,6 @@ function renderDashboard() {
     </div>`;
   }).join('');
 
-  // 기간 한도 (사용 내역 있을 때만)
   const periodRowsHtml = Object.entries(PERIOD_LIMITS).map(([cat, lim]) => {
     const u = allUsage[cat] || 0;
     if (u === 0) return '';
@@ -494,7 +501,6 @@ function renderDashboard() {
     ${catRowsHtml}${periodRowsHtml}`;
 }
 
-/* ── RECORDS ── */
 function renderHistory() {
   const recs = sortByDate(getMonthRecords(state.currentMonth));
   const el = document.getElementById('view-history');
@@ -521,7 +527,6 @@ function renderHistory() {
     </div>`).join('');
 }
 
-/* ── INFO ── */
 function renderInfo() {
   const allCatInfo = {
     ...Object.fromEntries(Object.keys(MONTHLY_LIMITS).map(k => [k, CAT_INFO[k]])),
@@ -540,7 +545,6 @@ function renderInfo() {
     <div class="info-warn">환급 신청 마감 매월 25일 · 일시불 결제만 승인 · 계좌이체·현금 불가</div>`;
 }
 
-/* ── DASHBOARD ── */
 function renderStats() {
   const m = state.currentMonth;
   const budget = getBudget(m);
@@ -614,8 +618,8 @@ function renderStats() {
         <circle cx="55" cy="55" r="46" fill="none" stroke="#111" stroke-width="1.5"/>
         <circle cx="55" cy="55" r="30" fill="none" stroke="#111" stroke-width="1.5"/>
         <circle cx="55" cy="55" r="29" fill="#ccc"/>
-        <text x="55" y="50" text-anchor="middle" font-size="10" font-weight="900" font-family="Helvetica Neue,Arial" fill="#111">${(used/10000).toFixed(0)}만원</text>
-        <text x="55" y="63" text-anchor="middle" font-size="8" font-weight="700" font-family="Helvetica Neue,Arial" fill="#111" letter-spacing="1">USED</text>
+        <text x="55" y="50" text-anchor="middle" font-size="10" font-weight="900" font-family="Pretendard,Arial" fill="#111">${(used/10000).toFixed(0)}만원</text>
+        <text x="55" y="63" text-anchor="middle" font-size="8" font-weight="700" font-family="Pretendard,Arial" fill="#111" letter-spacing="1">USED</text>
       </svg>
       <div class="legend">${legendHtml || '<div style="font-size:11px;font-weight:700;opacity:.4">NO DATA</div>'}</div>
     </div>
