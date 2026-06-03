@@ -512,7 +512,7 @@ function renderHistory() {
       </div>
       <div class="rec-right">
         <div class="rec-amount">−${fmt(r.amount)}</div>
-        <div class="rec-receipt${r.receipt?'':' no'}">RECEIPT</div>
+        <div class="rec-receipt${r.receipt?'':' no'}" style="${r.receipt?'color:#ff6a00;':''}">RECEIPT</div>
         <div class="btn-row">
           <button class="btn-action" onclick="editRecord(${r.id})">EDIT</button>
           <button class="btn-action" onclick="deleteRecord(${r.id})">DEL</button>
